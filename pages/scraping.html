@@ -3,10 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
     <title>Busca de Comércio</title>
     <style>
+      /* Estilos básicos */
       body {
-        font-family: "Roboto", sans-serif;
+        font-family: "Poppins", sans-serif;
         font-size: 16px;
         display: flex;
         flex-direction: column;
@@ -16,6 +22,7 @@
         margin: 0;
         padding: 20px;
       }
+
       .container {
         background: white;
         padding: 20px;
@@ -25,16 +32,146 @@
         max-width: 800px;
         text-align: center;
         margin-bottom: 20px;
+        & h2 {
+          margin: 0;
+        }
       }
-      a {
+
+      /* Container principal com largura máxima de 1100px */
+      .container-wrapper {
+        display: flex;
+        width: 100%;
+        max-width: 1100px;
+        transition: all 0.3s ease;
+        margin: 0 auto;
+      }
+
+      /* Estilo comum para as listas */
+      .list-container {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+        transition: width 0.3s ease;
+        overflow: hidden;
+      }
+
+      /* Área de "Resultados da Busca" (à esquerda) */
+      .list-container.search {
+        width: calc(100% - 110px);
+        flex-shrink: 0;
+        border-radius: 10px 0px 0px 10px;
+      }
+
+      /* Área de "Comércios Salvos" (à direita) – inicialmente 50px */
+      .list-container.salvos {
+        margin-left: -5px;
+        width: 50px;
+        flex-shrink: 0;
+      }
+
+      /* Quando a visualização estiver expandida:
+         - "Resultados da Busca" encolhe para 50px;
+         - "Comércios Salvos" expande para ocupar o restante.
+      */
+      .container-wrapper.expanded .list-container.search {
+        width: 50px;
+      }
+      .container-wrapper.expanded .list-container.salvos {
+        width: calc(100% - 110px);
+      }
+
+      /* Cabeçalhos clicáveis */
+      h3 {
+        border-bottom: 1px solid #0056b3;
+        cursor: pointer;
+        margin: 0;
+        padding: 5px 0;
+        color: #333;
+      }
+
+      /* Contêiner para o conteúdo (além do cabeçalho) */
+      .list-container .content {
+        transition: opacity 0.3s ease;
+      }
+
+      /* Exibe o conteúdo da área ativa e oculta o da área colapsada */
+      .container-wrapper:not(.expanded) .list-container.search .content {
+        display: block;
+      }
+      .container-wrapper:not(.expanded) .list-container.salvos .content {
+        display: none;
+      }
+      .container-wrapper.expanded .list-container.search .content {
+        display: none;
+      }
+      .container-wrapper.expanded .list-container.salvos .content {
+        display: block;
+      }
+
+      .list-item {
+        font-size: 14px;
+        border-bottom: 1px solid #ddd;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 3px;
+        justify-content: space-between;
+      }
+      .wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        flex-grow: 1;
+        line-height: 1.16;
+      }
+      .wrapper span:nth-child(2) {
+        font-size: 12px;
+      }
+
+      .wrapper a {
+        font-size: 12px;
         text-decoration: none;
         font-weight: 700;
         color: #0056b3;
-        padding: 5px;
       }
-      h2,
-      h3 {
-        margin-bottom: 15px;
+      .wrapper span:nth-child(5) {
+        font-size: 12px;
+        font-weight: 500;
+        color: #b30000;
+      }
+      .buttons {
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+      .btn {
+        margin-top: 0;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      .btn-delete {
+        background: #dc3545;
+        color: white;
+      }
+      .btn-crm {
+        background: #28a745;
+        color: white;
+      }
+      .btn-save {
+        background: #f59709;
+        color: white;
+      }
+      .h3-wp {
+        width: 180px;
+      }
+      .h3-wp h3 {
+        margin-bottom: 8px;
         color: #333;
       }
       input {
@@ -65,65 +202,10 @@
       button:hover {
         background: #0056b3;
       }
-      .list-container {
-        width: 90%;
-        background: white;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-        max-width: 1200px;
-        margin-bottom: 20px;
-      }
-      .list-item {
-        font-size: 14px;
-        border-bottom: 1px solid #ddd;
-        padding: 10px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        margin-top: 6px;
-        justify-content: space-between;
-      }
-      .wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-        flex-grow: 1;
-      }
-      .buttons {
-        display: flex;
-        gap: 10px;
-        flex-shrink: 0;
-      }
-      .btn {
-        margin-top: 0;
-        padding: 6px 12px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 12px;
-        white-space: nowrap;
-      }
-      .btn-delete {
-        background: #dc3545;
-        color: white;
-      }
-      .btn-crm {
-        background: #28a745;
-        color: white;
-      }
-      .btn-save {
-        background: #f59709;
-        color: white;
-      }
-      .error-message {
-        color: #dc3545;
-        padding: 10px;
-        text-align: center;
-      }
     </style>
   </head>
   <body>
+    <!-- Formulário de busca -->
     <div class="container">
       <h2>Buscar Comércio</h2>
       <input type="text" id="ramo" placeholder="Digite o ramo do comércio" />
@@ -131,19 +213,41 @@
       <button onclick="enviarFormulario()">Buscar</button>
     </div>
 
-    <div class="list-container">
-      <h3>Resultados</h3>
-      <div id="results-list"></div>
+    <div class="container-wrapper">
+      <!-- Área de Resultados da Busca -->
+      <div class="list-container search">
+        <div class="h3-wp">
+          <h3 id="searchHeader">Busca</h3>
+        </div>
+        <div class="content">
+          <div id="results-list"></div>
+        </div>
+      </div>
+
+      <!-- Área de Comércios Salvos -->
+      <div class="list-container salvos">
+        <div class="h3-wp">
+          <h3 id="savedHeader">Salvos</h3>
+        </div>
+        <div class="content">
+          <div id="saved-loading" style="display: none; margin: 10px 0">
+            Carregando...
+          </div>
+          <div id="saved-results"></div>
+        </div>
+      </div>
     </div>
 
     <script>
-      // Função para extrair coordenadas do link do Google Maps
+      /* ========= Funções da busca principal ========= */
+
+      // Extrai as coordenadas do link do Google Maps
       function extrairCoordenadas(link) {
         const match = link.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
         return match ? `${match[1]},${match[2]}` : "";
       }
 
-      // Função principal de envio do formulário
+      // Envia a requisição com os dados da busca
       async function enviarFormulario() {
         const ramo = document.getElementById("ramo").value.trim();
         const cidadeLink = document.getElementById("cidade").value.trim();
@@ -177,17 +281,18 @@
         }
       }
 
-      // Funções de gerenciamento do LocalStorage
+      // Armazena os resultados no localStorage
       function salvarNoLocalStorage(data) {
         localStorage.setItem("resultados", JSON.stringify(data));
       }
 
+      // Carrega os resultados do localStorage
       function carregarDoLocalStorage() {
         const data = localStorage.getItem("resultados");
         return data ? JSON.parse(data) : [];
       }
 
-      // Funções de manipulação de itens
+      // Exclui um item da busca (localStorage) e atualiza o status via webhook
       function excluirItem(index) {
         const lista = carregarDoLocalStorage();
         const item = lista[index];
@@ -200,6 +305,7 @@
         }
       }
 
+      // Envia um item para o CRM e atualiza via webhook
       function enviarParaCRM(index) {
         const lista = carregarDoLocalStorage();
         const item = lista[index];
@@ -213,6 +319,7 @@
         }
       }
 
+      // Exemplo de função para "salvar" um item (opcional na busca principal)
       function salvarItem(index) {
         const lista = carregarDoLocalStorage();
         const item = lista[index];
@@ -226,7 +333,7 @@
         }
       }
 
-      // Função para atualizar status via webhook
+      // Atualiza o status via webhook
       async function enviarParaWebhook(placeId, status) {
         try {
           await fetch(
@@ -242,7 +349,7 @@
         }
       }
 
-      // Renderização da lista principal
+      // Renderiza a lista de resultados da busca principal
       function renderizarLista() {
         const lista = carregarDoLocalStorage();
         const resultsList = document.getElementById("results-list");
@@ -252,37 +359,140 @@
           const listItem = document.createElement("div");
           listItem.className = "list-item";
           listItem.innerHTML = `
-                    <div class="wrapper">
-                        <strong>${item.title || "Sem nome"}</strong>
-                        <span>Nota: ${item.rating || "N/A"} (${
+            <div class="wrapper">
+              <strong>${item.title || "Sem nome"}</strong>
+              <span>Nota: ${item.rating || "N/A"} (${
             item.reviews || "0"
           } avaliações)</span>
-                        <span>Endereço: ${
-                          item.address || "Não informado"
-                        }</span>
-                        <span>Telefone: ${
-                          item.phone && item.phone !== "null"
-                            ? item.phone
-                            : "N/A"
-                        }</span>
-                        ${
-                          item.website && item.website !== "null"
-                            ? `<a href="${item.website}" target="_blank">Site</a>`
-                            : "SEM SITE"
-                        }
-                    </div>
-                    <div class="buttons">
-                        <button class="btn btn-delete" onclick="excluirItem(${index})">Excluir</button>
-                        <button class="btn btn-crm" onclick="enviarParaCRM(${index})">Enviar CRM</button>
-                        <button class="btn btn-save" onclick="salvarItem(${index})">Salvar</button>
-                    </div>
-                `;
+              <span>Endereço: ${item.address || "Não informado"}</span>
+              <span>Telefone: ${
+                item.phone && item.phone !== "null" ? item.phone : "N/A"
+              }</span>
+              ${
+                item.website && item.website !== "null"
+                  ? `<a href="${item.website}" target="_blank">Site ou Rede Social</a>`
+                  : `<span>NÃO informa Site ou Rede social</span>`
+              }
+            </div>
+            <div class="buttons">
+              <button class="btn btn-delete" onclick="excluirItem(${index})">Excluir</button>
+              <button class="btn btn-crm" onclick="enviarParaCRM(${index})">Enviar CRM</button>
+              <button class="btn btn-save" onclick="salvarItem(${index})">Salvar</button>
+            </div>
+          `;
           resultsList.appendChild(listItem);
         });
       }
 
-      // Inicialização
       document.addEventListener("DOMContentLoaded", renderizarLista);
+
+      /* ========= Integração dos Comércios Salvos ========= */
+
+      let savedData = [];
+
+      // Busca os comércios salvos via webhook e atualiza a lista
+      async function searchSavedData() {
+        const loading = document.getElementById("saved-loading");
+        const resultsContainer = document.getElementById("saved-results");
+
+        loading.style.display = "block";
+        resultsContainer.innerHTML = "";
+
+        try {
+          const response = await fetch(
+            "https://webhook.ediogoncalvesdev.com.br/webhook/busca_salvos",
+            { method: "GET" }
+          );
+
+          if (!response.ok)
+            throw new Error(`Erro na requisição: ${response.status}`);
+
+          const data = await response.json();
+          savedData = data;
+          displaySavedResults(data);
+        } catch (error) {
+          console.error("Erro:", error);
+          resultsContainer.innerHTML =
+            "<p>Ocorreu um erro ao buscar os dados</p>";
+        } finally {
+          loading.style.display = "none";
+        }
+      }
+
+      // Exibe os comércios salvos na tela com botões de Excluir e Enviar CRM
+      function displaySavedResults(data) {
+        const resultsContainer = document.getElementById("saved-results");
+        resultsContainer.innerHTML = "";
+
+        if (data.length === 0) {
+          resultsContainer.innerHTML = "<p>Nenhum dado encontrado</p>";
+          return;
+        }
+
+        data.forEach((item, index) => {
+          const div = document.createElement("div");
+          div.className = "list-item";
+          div.innerHTML = `
+            <div class="wrapper">
+              <strong>${item.title || item.nome || "Sem nome"}</strong>
+              <span>Nota: ${item.rating || "N/A"} (${
+            item.reviews || "0"
+          } avaliações)</span>
+              <span>Endereço: ${item.address || "Não informado"}</span>
+              <span>Telefone: ${
+                item.phone && item.phone !== "null" ? item.phone : "N/A"
+              }</span>
+              ${
+                item.website && item.website !== "null"
+                  ? `<a href="${item.website}" target="_blank">Site ou Rede Social</a>`
+                  : `<span>NÃO informa Site ou Rede social</span>`
+              }
+            </div>
+            <div class="buttons">
+              <button class="btn btn-delete" onclick="excluirSavedItem(${index})">Excluir</button>
+              <button class="btn btn-crm" onclick="enviarSavedParaCRM(${index})">Enviar CRM</button>
+            </div>
+          `;
+          resultsContainer.appendChild(div);
+        });
+      }
+
+      // Exclui um item dos salvos e atualiza o status via webhook
+      async function excluirSavedItem(index) {
+        const item = savedData[index];
+        if (item) {
+          await enviarParaWebhook(item.place_id || item.id, "rejeitado");
+          savedData.splice(index, 1);
+          displaySavedResults(savedData);
+        }
+      }
+
+      // Envia um item para o CRM e atualiza o status via webhook
+      async function enviarSavedParaCRM(index) {
+        const item = savedData[index];
+        if (item) {
+          await enviarParaWebhook(item.place_id || item.id, "crm");
+          savedData.splice(index, 1);
+          displaySavedResults(savedData);
+          alert("Enviado ao CRM com sucesso!");
+        }
+      }
+
+      /* ========= Alternância de Visualização via Cabeçalhos ========= */
+      const savedHeader = document.getElementById("savedHeader");
+      const searchHeader = document.getElementById("searchHeader");
+      const containerWrapper = document.querySelector(".container-wrapper");
+
+      // Ao clicar em "Comércios Salvos": expande a área e atualiza a lista
+      savedHeader.addEventListener("click", () => {
+        containerWrapper.classList.add("expanded");
+        searchSavedData();
+      });
+
+      // Ao clicar em "Resultados da Busca": retorna ao estado padrão
+      searchHeader.addEventListener("click", () => {
+        containerWrapper.classList.remove("expanded");
+      });
     </script>
   </body>
 </html>
