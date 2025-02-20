@@ -3,42 +3,106 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Busca de Comércio</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Busca de Comércio e Informações</title>
     <style>
       body {
-        font-family: "Roboto", sans-serif;
+        font-family: "Poppins", sans-serif;
         font-size: 16px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 100vh;
         background-color: #fafafa;
         margin: 0;
         padding: 20px;
       }
+
+      .search-modules {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-width: 1130px;
+        width: 100%;
+        margin: 0 auto 20px;
+      }
+
       .container {
         background: white;
-        padding: 20px;
-        border-radius: 10px;
+        border-radius: 5px;
         box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-        width: 90%;
-        max-width: 800px;
-        text-align: center;
-        margin-bottom: 20px;
+        transition: height 0.3s ease;
+        font-size: 12px;
       }
-      a {
-        text-decoration: none;
-        font-weight: 700;
-        color: #0056b3;
-        padding: 5px;
-      }
-      h2,
-      h3 {
-        margin-bottom: 15px;
+
+      .container h2 {
+        position: relative;
+        padding: 5px 0px 5px 20px;
+        margin: 0;
+        border-radius: 5px;
+        cursor: pointer;
         color: #333;
+        font-size: 20px;
       }
-      input {
-        width: calc(100% - 20px);
+
+      .container.banco h2::after {
+        content: ">";
+        margin: auto;
+        position: absolute;
+        right: 15px;
+        transition: transform 0.3s ease;
+        font-size: 30px;
+        line-height: 1;
+      }
+
+      .container.comercio h2::after {
+        content: ">";
+        transform: rotate(90deg);
+        position: absolute;
+        right: 15px;
+        font-size: 30px;
+        line-height: 1;
+        transition: transform 0.3s ease;
+      }
+
+      .container.comercio {
+        height: auto;
+      }
+
+      .container.banco {
+        overflow: hidden;
+      }
+
+      .search-modules.expanded .container.banco {
+        height: auto;
+      }
+
+      .search-modules.expanded .container.banco h2::after {
+        transform: rotate(90deg);
+      }
+      .search-modules.expanded .container.comercio h2::after {
+        transform: rotate(0deg);
+      }
+
+      .container .content {
+        padding: 0px 20px 20px;
+      }
+
+      .container.banco .content {
+        display: none;
+      }
+
+      .search-modules.expanded .container.comercio .content {
+        display: none;
+      }
+
+      .search-modules.expanded .container.banco .content {
+        display: block;
+      }
+
+      input,
+      select {
+        box-sizing: border-box;
+        width: 100%;
         margin-top: 10px;
         padding: 10px;
         font-size: 14px;
@@ -47,9 +111,12 @@
         outline: none;
         transition: border-color 0.3s;
       }
-      input:focus {
+
+      input:focus,
+      select:focus {
         border-color: #007bff;
       }
+
       button {
         width: 100%;
         margin-top: 15px;
@@ -62,39 +129,70 @@
         cursor: pointer;
         transition: background 0.3s;
       }
+
       button:hover {
         background: #0056b3;
       }
+
       .list-container {
-        width: 90%;
         background: white;
         padding: 15px;
         border-radius: 10px;
         box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-        max-width: 1200px;
-        margin-bottom: 20px;
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+        overflow: hidden;
       }
+
+      h3 {
+        border-bottom: 1px solid #0056b3;
+        margin: 0;
+        padding: 5px 0;
+        color: #333;
+      }
+
       .list-item {
         font-size: 14px;
         border-bottom: 1px solid #ddd;
-        padding: 10px;
+        padding: 8px;
         display: flex;
         align-items: center;
         gap: 5px;
-        margin-top: 6px;
+        margin-top: 3px;
         justify-content: space-between;
       }
+
       .wrapper {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: 3px;
         flex-grow: 1;
+        line-height: 1.16;
       }
+
+      .wrapper span:nth-child(2) {
+        font-size: 12px;
+      }
+
+      .wrapper span:nth-child(6) {
+        font-size: 12px;
+        color: #b30000;
+      }
+
+      .wrapper a {
+        font-size: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        color: #0056b3;
+      }
+
       .buttons {
         display: flex;
         gap: 10px;
         flex-shrink: 0;
       }
+
       .btn {
         margin-top: 0;
         padding: 6px 12px;
@@ -104,49 +202,202 @@
         font-size: 12px;
         white-space: nowrap;
       }
+
       .btn-delete {
         background: #dc3545;
         color: white;
       }
+
       .btn-crm {
         background: #28a745;
         color: white;
       }
-      .btn-save {
-        background: #f59709;
-        color: white;
-      }
-      .error-message {
-        color: #dc3545;
-        padding: 10px;
+
+      .no-results {
+        padding: 20px;
         text-align: center;
+        color: #666;
+        font-style: italic;
+      }
+
+      .card {
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        margin-top: 10px;
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h2>Buscar Comércio</h2>
-      <input type="text" id="ramo" placeholder="Digite o ramo do comércio" />
-      <input type="text" id="cidade" placeholder="Cole o link do Google Maps" />
-      <button onclick="enviarFormulario()">Buscar</button>
+    <div class="search-modules">
+      <div class="container comercio">
+        <h2>Buscar Comércio</h2>
+        <div class="content">
+          <input
+            type="text"
+            id="ramo"
+            placeholder="Digite o ramo do comércio"
+          />
+          <input
+            type="text"
+            id="mapsLink"
+            placeholder="Cole o link do Google Maps"
+          />
+          <button onclick="enviarFormulario()">Buscar</button>
+        </div>
+      </div>
+
+      <div class="container banco">
+        <h2>Banco Dados</h2>
+        <div class="content">
+          <form id="searchFormInfo">
+            <select id="cidadeInfo" name="cidade" required>
+              <option value="">Carregando cidades...</option>
+            </select>
+
+            <select id="categoriaInfo" name="categoria" required>
+              <option value="Ferragens">Ferragens</option>
+              <option value="Agropecuária">Agropecuária</option>
+              <option value="Loja de Tintas">Loja de Tintas</option>
+              <option value="Material de Construção">
+                Material de Construção
+              </option>
+              <option value="Madereira">Madereira</option>
+            </select>
+
+            <select id="statusInfo" name="status" required>
+              <option value="crm">CRM</option>
+              <option value="rejeitado">Rejeitado</option>
+              <option value="cliente">Cliente</option>
+              <option value="HTML">HTML</option>
+              <option value="arquivado">Arquivado</option>
+            </select>
+
+            <button type="submit">Buscar</button>
+          </form>
+        </div>
+      </div>
     </div>
 
     <div class="list-container">
-      <h3>Resultados</h3>
-      <div id="results-list"></div>
+      <h3>Respostas</h3>
+      <div class="content">
+        <div id="results-list"></div>
+      </div>
     </div>
 
     <script>
-      // Função para extrair coordenadas do link do Google Maps
+      // Funções compartilhadas
+      function salvarNoLocalStorage(data) {
+        localStorage.setItem("resultados", JSON.stringify(data));
+      }
+
+      function carregarDoLocalStorage() {
+        const data = localStorage.getItem("resultados");
+        return data ? JSON.parse(data) : [];
+      }
+
+      async function enviarParaWebhook(id, status) {
+        try {
+          await fetch(
+            "https://webhook.ediogoncalvesdev.com.br/webhook/modify_status",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ place_id: id, status }),
+            }
+          );
+        } catch (error) {
+          console.error("Erro ao atualizar status:", error);
+        }
+      }
+
+      function renderizarLista() {
+        const lista = carregarDoLocalStorage();
+        const resultsList = document.getElementById("results-list");
+        resultsList.innerHTML = "";
+
+        const isEmptyResponse =
+          lista.length === 0 ||
+          lista.every((item) => {
+            return Object.keys(item).length === 0;
+          });
+
+        if (isEmptyResponse) {
+          resultsList.innerHTML = `
+            <div class="no-results">
+              Nenhum resultado encontrado com estas especificações.
+            </div>
+          `;
+          return;
+        }
+
+        lista.forEach((item, index) => {
+          const listItem = document.createElement("div");
+          listItem.className = "list-item";
+          listItem.innerHTML = `
+            <div class="wrapper">
+              <strong>${item.title || "Sem nome"}</strong>
+              ${
+                item.categoria
+                  ? `<span>Categoria: ${item.categoria}</span>`
+                  : ""
+              }
+              <span>Nota: ${item.rating || "N/A"} (${
+            item.reviews || "0"
+          } avaliações)</span>
+              <span>Endereço: ${item.address || "Não informado"}</span>
+              <span>Telefone: ${
+                item.phone && item.phone !== "null" ? item.phone : "N/A"
+              }</span>
+              ${
+                item.website && item.website !== "null"
+                  ? `<a href="${item.website}" target="_blank">Site ou Rede Social</a>`
+                  : `<span>NÃO informa Site ou Rede social</span>`
+              }
+            </div>
+            <div class="buttons">
+              <button class="btn btn-delete" onclick="excluirItem(${index})">Excluir</button>
+              <button class="btn btn-crm" onclick="enviarParaCRM(${index})">Enviar CRM</button>
+            </div>
+          `;
+          resultsList.appendChild(listItem);
+        });
+      }
+
+      function excluirItem(index) {
+        const lista = carregarDoLocalStorage();
+        const item = lista[index];
+        if (item) {
+          enviarParaWebhook(item.place_id || item.id, "rejeitado");
+          lista.splice(index, 1);
+          salvarNoLocalStorage(lista);
+          renderizarLista();
+        }
+      }
+
+      function enviarParaCRM(index) {
+        const lista = carregarDoLocalStorage();
+        const item = lista[index];
+        if (item) {
+          enviarParaWebhook(item.place_id || item.id, "crm");
+          lista.splice(index, 1);
+          salvarNoLocalStorage(lista);
+          renderizarLista();
+          alert("Enviado ao CRM com sucesso!");
+        }
+      }
+
+      // Módulo Buscar Comércio
       function extrairCoordenadas(link) {
         const match = link.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
         return match ? `${match[1]},${match[2]}` : "";
       }
 
-      // Função principal de envio do formulário
       async function enviarFormulario() {
         const ramo = document.getElementById("ramo").value.trim();
-        const cidadeLink = document.getElementById("cidade").value.trim();
+        const cidadeLink = document.getElementById("mapsLink").value.trim();
         const coordenadas = extrairCoordenadas(cidadeLink);
 
         if (!ramo || !coordenadas) {
@@ -167,8 +418,16 @@
           );
 
           if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
-
           const responseData = await response.json();
+
+          if (
+            responseData.length === 0 ||
+            responseData.every((item) => Object.keys(item).length === 0)
+          ) {
+            alert("Nenhum comércio encontrado com esses critérios!");
+            return;
+          }
+
           salvarNoLocalStorage(responseData);
           renderizarLista();
         } catch (error) {
@@ -177,112 +436,126 @@
         }
       }
 
-      // Funções de gerenciamento do LocalStorage
-      function salvarNoLocalStorage(data) {
-        localStorage.setItem("resultados", JSON.stringify(data));
+      // Módulo Banco de Dados
+      function carregarCidadesInfo() {
+        fetch(
+          "https://webhook.ediogoncalvesdev.com.br/webhook/banco_dados?att_banco=att_banco"
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            const cidadeSelect = document.getElementById("cidadeInfo");
+            cidadeSelect.innerHTML =
+              '<option value="">Selecione uma cidade</option>';
+            data.forEach((item) => {
+              const option = document.createElement("option");
+              option.value = item.cidade.trim();
+              option.textContent = item.cidade.trim();
+              cidadeSelect.appendChild(option);
+            });
+          })
+          .catch((error) => {
+            console.error("Erro ao carregar cidades:", error);
+            document.getElementById("cidadeInfo").innerHTML =
+              '<option value="">Erro ao carregar</option>';
+          });
       }
 
-      function carregarDoLocalStorage() {
-        const data = localStorage.getItem("resultados");
-        return data ? JSON.parse(data) : [];
-      }
+      document
+        .getElementById("searchFormInfo")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          const formData = new FormData(this);
+          const params = new URLSearchParams(formData);
+          params.append("busca_banco", "busca_banco");
 
-      // Funções de manipulação de itens
-      function excluirItem(index) {
-        const lista = carregarDoLocalStorage();
-        const item = lista[index];
+          fetch(
+            `https://webhook.ediogoncalvesdev.com.br/webhook/banco_dados?${params}`
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              // Verifica se a resposta é vazia
+              if (
+                data.length === 0 ||
+                data.every((item) => Object.keys(item).length === 0)
+              ) {
+                alert("Nenhum resultado encontrado no banco de dados!");
+                return;
+              }
 
-        if (item) {
-          enviarParaWebhook(item.place_id, "rejeitado");
-          lista.splice(index, 1);
-          salvarNoLocalStorage(lista);
-          renderizarLista();
-        }
-      }
+              const transformedData = data.map((item) => ({
+                ...item,
+                place_id: item.place_id,
+              }));
 
-      function enviarParaCRM(index) {
-        const lista = carregarDoLocalStorage();
-        const item = lista[index];
+              // Removida a persistência para buscas no banco de dados
+              const resultsList = document.getElementById("results-list");
+              resultsList.innerHTML = "";
 
-        if (item) {
-          enviarParaWebhook(item.place_id, "crm");
-          lista.splice(index, 1);
-          salvarNoLocalStorage(lista);
-          renderizarLista();
-          alert("Enviado ao CRM com sucesso!");
-        }
-      }
-
-      function salvarItem(index) {
-        const lista = carregarDoLocalStorage();
-        const item = lista[index];
-
-        if (item) {
-          enviarParaWebhook(item.place_id, "salvo");
-          lista.splice(index, 1);
-          salvarNoLocalStorage(lista);
-          renderizarLista();
-          alert("Item salvo com sucesso!");
-        }
-      }
-
-      // Função para atualizar status via webhook
-      async function enviarParaWebhook(placeId, status) {
-        try {
-          await fetch(
-            "https://webhook.ediogoncalvesdev.com.br/webhook/modify_status",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ place_id: placeId, status }),
-            }
-          );
-        } catch (error) {
-          console.error("Erro ao atualizar status:", error);
-        }
-      }
-
-      // Renderização da lista principal
-      function renderizarLista() {
-        const lista = carregarDoLocalStorage();
-        const resultsList = document.getElementById("results-list");
-        resultsList.innerHTML = "";
-
-        lista.forEach((item, index) => {
-          const listItem = document.createElement("div");
-          listItem.className = "list-item";
-          listItem.innerHTML = `
-                    <div class="wrapper">
-                        <strong>${item.title || "Sem nome"}</strong>
-                        <span>Nota: ${item.rating || "N/A"} (${
-            item.reviews || "0"
-          } avaliações)</span>
-                        <span>Endereço: ${
-                          item.address || "Não informado"
-                        }</span>
-                        <span>Telefone: ${
-                          item.phone && item.phone !== "null"
-                            ? item.phone
-                            : "N/A"
-                        }</span>
-                        ${
-                          item.website && item.website !== "null"
-                            ? `<a href="${item.website}" target="_blank">Site</a>`
-                            : "SEM SITE"
-                        }
-                    </div>
-                    <div class="buttons">
-                        <button class="btn btn-delete" onclick="excluirItem(${index})">Excluir</button>
-                        <button class="btn btn-crm" onclick="enviarParaCRM(${index})">Enviar CRM</button>
-                        <button class="btn btn-save" onclick="salvarItem(${index})">Salvar</button>
-                    </div>
+              if (transformedData.length === 0) {
+                resultsList.innerHTML = `
+                  <div class="no-results">
+                    Nenhum resultado encontrado com estas especificações.
+                  </div>
                 `;
-          resultsList.appendChild(listItem);
+                return;
+              }
+
+              transformedData.forEach((item, index) => {
+                const listItem = document.createElement("div");
+                listItem.className = "list-item";
+                listItem.innerHTML = `
+                  <div class="wrapper">
+                    <strong>${item.title || "Sem nome"}</strong>
+                    ${
+                      item.categoria
+                        ? `<span>Categoria: ${item.categoria}</span>`
+                        : ""
+                    }
+                    <span>Nota: ${item.rating || "N/A"} (${
+                  item.reviews || "0"
+                } avaliações)</span>
+                    <span>Endereço: ${item.address || "Não informado"}</span>
+                    <span>Telefone: ${
+                      item.phone && item.phone !== "null" ? item.phone : "N/A"
+                    }</span>
+                    ${
+                      item.website && item.website !== "null"
+                        ? `<a href="${item.website}" target="_blank">Site ou Rede Social</a>`
+                        : `<span>NÃO informa Site ou Rede social</span>`
+                    }
+                  </div>
+                  <div class="buttons">
+                    <button class="btn btn-delete" onclick="excluirItem(${index})">Excluir</button>
+                    <button class="btn btn-crm" onclick="enviarParaCRM(${index})">Enviar CRM</button>
+                  </div>
+                `;
+                resultsList.appendChild(listItem);
+              });
+            })
+            .catch((error) => {
+              console.error("Erro ao buscar dados:", error);
+              alert("Erro ao buscar dados do banco!");
+            });
         });
-      }
 
       // Inicialização
-      document.addEventListener("DOMContentLoaded", renderizarLista);
+      document.addEventListener("DOMContentLoaded", () => {
+        renderizarLista();
+        carregarCidadesInfo();
+      });
+
+      // Alternância entre módulos
+      const searchModules = document.querySelector(".search-modules");
+      document
+        .querySelector(".container.banco h2")
+        .addEventListener("click", () => {
+          searchModules.classList.add("expanded");
+        });
+      document
+        .querySelector(".container.comercio h2")
+        .addEventListener("click", () => {
+          searchModules.classList.remove("expanded");
+        });
     </script>
   </body>
 </html>
